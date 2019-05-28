@@ -1,11 +1,28 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import request from "request";
 import { Container, Row, Col, Button } from "react-materialize";
-import { BarChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Bar } from "recharts";
+import { BarChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Bar, Label, LabelList } from "recharts";
 import "./App.scss";
 
-const renderCustomBarLabel = ({ payload, x, y, width, height, value }) => {
+const CustomBarLabel = props => {
+  let { payload, x, y, width, height, value, name } = props;
   return <text x={x + width / 2} y={y} fill="#666" textAnchor="middle" dy={-6}>{`${Math.round(value)}`}</text>;
+};
+
+const BarName = props => {
+  let { payload, x, y, width, height, value, name } = props;
+  return (
+    <text
+      x={x + width / 2}
+      y={450}
+      dy={14}
+      fill="white"
+      transform={`rotate(270 ${x + width / 2}, 450)`}
+      font-size="40px"
+    >
+      {`${value.toUpperCase()}`}
+    </text>
+  )
 };
 
 class CustomTooltip extends Component {
@@ -42,9 +59,9 @@ class App extends Component {
       let data = JSON.parse(body).data;
 
       data.sort((a, b) => b.hero_damage_avg_per_10m - a.hero_damage_avg_per_10m);
-      
+
       data = data.map((player, i) => {
-        player.rank = i + 1; 
+        player.rank = i + 1;
         return player;
       });
 
@@ -60,11 +77,12 @@ class App extends Component {
       if (err) console.log("Error: ", err);
 
       let data = JSON.parse(body).data;
+      let dataLength = data.length;
 
       data.sort((a, b) => a.hero_damage_avg_per_10m - b.hero_damage_avg_per_10m);
-      
+
       data = data.map((player, i) => {
-        player.rank = i + 1; 
+        player.rank = dataLength - i;
         return player;
       });
 
@@ -76,7 +94,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.setTopDmg();  
+    this.setTopDmg();
   }
 
   render() {
@@ -84,10 +102,12 @@ class App extends Component {
       <Container>
         <h1>OWL Stats</h1>
         <h2>{this.state.header}</h2>
-        <BarChart width={1000} height={500} data={this.state.data}>
-          <XAxis dataKey="name" tickSize tickMargin={8}/>
-          <Tooltip content={<CustomTooltip/>} />
-          <Bar dataKey="hero_damage_avg_per_10m" fill="#8884d8" label={renderCustomBarLabel} />
+        <BarChart width={600} height={500} data={this.state.data}>
+          <XAxis dataKey="rank" tickSize={0} tickMargin={8} />
+          <Tooltip content={<CustomTooltip />} />
+          <Bar dataKey="hero_damage_avg_per_10m" fill="#8884d8" label={<CustomBarLabel />} >
+            <LabelList dataKey="name" content={<BarName />} />
+          </Bar>
         </BarChart>
         <Button onClick={this.setTopDmg}>Top</Button>
         <Button onClick={this.setBottomDmg}>Bottom</Button>
