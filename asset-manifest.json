@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/owl-stats/static/css/main.8834845d.chunk.css",
-    "main.js": "/owl-stats/static/js/main.9c612aad.chunk.js",
-    "main.js.map": "/owl-stats/static/js/main.9c612aad.chunk.js.map",
+    "main.js": "/owl-stats/static/js/main.560c3142.chunk.js",
+    "main.js.map": "/owl-stats/static/js/main.560c3142.chunk.js.map",
     "runtime~main.js": "/owl-stats/static/js/runtime~main.0caba6ec.js",
     "runtime~main.js.map": "/owl-stats/static/js/runtime~main.0caba6ec.js.map",
     "static/js/2.d6191d2d.chunk.js": "/owl-stats/static/js/2.d6191d2d.chunk.js",
     "static/js/2.d6191d2d.chunk.js.map": "/owl-stats/static/js/2.d6191d2d.chunk.js.map",
     "index.html": "/owl-stats/index.html",
-    "precache-manifest.fc0dbdbb613975fc952fc0db6bd30995.js": "/owl-stats/precache-manifest.fc0dbdbb613975fc952fc0db6bd30995.js",
+    "precache-manifest.db1466e3345e92c369fe42529dc94029.js": "/owl-stats/precache-manifest.db1466e3345e92c369fe42529dc94029.js",
     "service-worker.js": "/owl-stats/service-worker.js",
     "static/css/main.8834845d.chunk.css.map": "/owl-stats/static/css/main.8834845d.chunk.css.map"
   }
