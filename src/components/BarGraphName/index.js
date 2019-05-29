@@ -14,6 +14,7 @@ const BarGraphName = props => {
       case "#fb7299":
       case "#2FB228":
       case "#c4c4c4":
+      case "#67a2b2":
         return "black";
       default: 
         return "white";

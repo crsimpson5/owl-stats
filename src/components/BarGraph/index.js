@@ -47,7 +47,7 @@ const BarGraph = props => {
       case "ATL":
         return "#c4c4c4";
       case "GZC":
-        return "#122c42";
+        return "#67a2b2";
       default:
         return "red";
     }
@@ -56,12 +56,12 @@ const BarGraph = props => {
   return (
     <BarChart width={600} height={500} data={props.data}>
       <XAxis dataKey="rank" tickSize={0} tickMargin={8} />
-      <YAxis hide={true} padding={{ top: 10 }} />
+      <YAxis hide={true} padding={{ top: 15 }} domain={[0, "dataMax"]}/>
       <Tooltip content={<BarGraphTooltip />} />
-      <Bar dataKey="hero_damage_avg_per_10m" maxBarSize={400} fill="black" label={<BarGraphLabel />}>
+      <Bar dataKey={props.sortBy} fill="black" label={<BarGraphLabel />}>
         <LabelList dataKey="name" content={<BarGraphName />} />
         {
-          props.data.map((player, i) => (
+          props.data && props.data.map((player, i) => (
             <Cell key={`cell-${i}`} fill={setBarColor(player.team)} />
           ))
         }

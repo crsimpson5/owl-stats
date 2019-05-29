@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react";
 import request from "request";
-import { Container, Button } from "react-materialize";
+import { Container, Button, Pagination } from "react-materialize";
 import "./App.scss";
 
 import BarGraph from "./components/BarGraph";
@@ -9,54 +9,83 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: [],
-      header: "Loading..."
+      playerData: [],
+      graphData: [],
+      sortBy: "",
+      graphMax: 0,
+      header: "Loading...",
+      pagination: 1,
+      pages: 10
     };
   }
 
-  setTopDmg = () => {
+  getPlayerData = () => {
     request("https://api.overwatchleague.com/stats/players", (err, response, body) => {
       if (err) console.log("Error: ", err);
 
       let data = JSON.parse(body).data;
 
-      data.sort((a, b) => b.hero_damage_avg_per_10m - a.hero_damage_avg_per_10m);
-
-      data = data.map((player, i) => {
-        player.rank = i + 1;
-        return player;
-      });
-
       this.setState({
-        data: data.filter((player, i) => i < 10),
-        header: "Top 10 damage dealers"
-      })
+        playerData: data,
+        pages: Math.ceil(data.length / 10)
+      }, () => this.setTopDmg(this.state.playerData));
     });
-  }
+  };
 
-  setBottomDmg = () => {
-    request("https://api.overwatchleague.com/stats/players", (err, response, body) => {
-      if (err) console.log("Error: ", err);
+  setTopDmg = data => {
+    if (!data) return;
 
-      let data = JSON.parse(body).data;
-      let dataLength = data.length;
+    data.sort((a, b) => b.hero_damage_avg_per_10m - a.hero_damage_avg_per_10m);
+    data = data.map((player, i) => {
+      player.rank = i + 1;
+      return player;
+    });
 
-      data.sort((a, b) => a.hero_damage_avg_per_10m - b.hero_damage_avg_per_10m);
+    this.setState({
+      graphData: data.filter((player, i) => i < 10),
+      header: "Top 10 damage dealers",
+      sortBy: "hero_damage_avg_per_10m",
+      graphMax: data[0].hero_damage_avg_per_10m,
+      pagination: 1
+    });
+  };
 
-      data = data.map((player, i) => {
-        player.rank = dataLength - i;
-        return player;
-      });
+  setTopHealing = data => {
+    if (!data) return;
 
-      this.setState({
-        data: data.filter((player, i) => i < 10),
-        header: "Bottom 10 damage dealers"
-      })
+    data.sort((a, b) => b.healing_avg_per_10m - a.healing_avg_per_10m);
+    data = data.map((player, i) => {
+      player.rank = i + 1;
+      return player;
+    });
+
+    this.setState({
+      graphData: data.filter((player, i) => i < 10),
+      header: "Top 10 healers",
+      sortBy: "healing_avg_per_10m",
+      pagination: 1
+    });
+  };
+
+  handlePageSelect = (event, data) => {
+    if (!data) return;
+
+    const setGraphData = page => {
+      if (page * 10 > this.state.playerData.length) {
+        return data.filter((player, i) => i >= this.state.playerData.length - 10)
+      } else {
+        return data.filter((player, i) => i >= page * 10 - 10 && i < page * 10)
+      }
+    };
+
+    this.setState({
+      graphData: setGraphData(event),
+      pagination: event,
     });
   };
 
   componentDidMount() {
-    this.setTopDmg();
+    this.getPlayerData();
   }
 
   render() {
@@ -64,9 +93,18 @@ class App extends Component {
       <Container>
         <h1>OWL Stats</h1>
         <h2>{this.state.header}</h2>
-        <BarGraph data={this.state.data} />
-        <Button onClick={this.setTopDmg}>Top</Button>
-        <Button onClick={this.setBottomDmg}>Bottom</Button>
+        <BarGraph
+          data={this.state.graphData}
+          sortBy={this.state.sortBy}
+        />
+        <Pagination
+          activePage={this.state.pagination}
+          maxButtons={10}
+          items={this.state.pages}
+          onSelect={event => this.handlePageSelect(event, this.state.playerData)}
+        />
+        <Button onClick={() => this.setTopDmg(this.state.playerData)}>Top dps</Button>
+        <Button onClick={() => this.setTopHealing(this.state.playerData)}>Top healers</Button>
       </Container>
     );
   }
