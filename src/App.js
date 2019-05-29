@@ -1,47 +1,9 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component, Fragment } from "react";
 import request from "request";
-import { Container, Row, Col, Button } from "react-materialize";
-import { BarChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Bar, Label, LabelList } from "recharts";
+import { Container, Button } from "react-materialize";
 import "./App.scss";
 
-const CustomBarLabel = props => {
-  let { payload, x, y, width, height, value, name } = props;
-  return <text x={x + width / 2} y={y} fill="#666" textAnchor="middle" dy={-6}>{`${Math.round(value)}`}</text>;
-};
-
-const BarName = props => {
-  let { payload, x, y, width, height, value, name } = props;
-  return (
-    <text
-      x={x + width / 2}
-      y={450}
-      dy={14}
-      fill="white"
-      transform={`rotate(270 ${x + width / 2}, 450)`}
-      font-size="40px"
-    >
-      {`${value.toUpperCase()}`}
-    </text>
-  )
-};
-
-class CustomTooltip extends Component {
-  render() {
-    const { active } = this.props;
-
-    if (active) {
-      const { label, payload } = this.props;
-      return (
-        <div className="custom-tooltip">
-          <p className="label">{`${label}`}</p>
-          <p className="desc">{`Rank: ${payload[0].payload.rank}`}</p>
-          <p className="desc">{`Damage per 10m: ${Math.round(payload[0].value)}`}</p>
-        </div>
-      );
-    }
-    return null;
-  }
-}
+import BarGraph from "./components/BarGraph";
 
 class App extends Component {
   constructor(props) {
@@ -91,7 +53,7 @@ class App extends Component {
         header: "Bottom 10 damage dealers"
       })
     });
-  }
+  };
 
   componentDidMount() {
     this.setTopDmg();
@@ -102,13 +64,7 @@ class App extends Component {
       <Container>
         <h1>OWL Stats</h1>
         <h2>{this.state.header}</h2>
-        <BarChart width={600} height={500} data={this.state.data}>
-          <XAxis dataKey="rank" tickSize={0} tickMargin={8} />
-          <Tooltip content={<CustomTooltip />} />
-          <Bar dataKey="hero_damage_avg_per_10m" fill="#8884d8" label={<CustomBarLabel />} >
-            <LabelList dataKey="name" content={<BarName />} />
-          </Bar>
-        </BarChart>
+        <BarGraph data={this.state.data} />
         <Button onClick={this.setTopDmg}>Top</Button>
         <Button onClick={this.setBottomDmg}>Bottom</Button>
       </Container>
