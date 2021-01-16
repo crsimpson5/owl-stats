@@ -2,6 +2,7 @@ import React, { Component, Fragment } from "react";
 import request from "request";
 import { Container, Button, Pagination } from "react-materialize";
 import "./App.scss";
+import dummyData from "./dummyData";
 
 import BarGraph from "./components/BarGraph";
 
@@ -85,7 +86,17 @@ class App extends Component {
   };
 
   componentDidMount() {
-    this.getPlayerData();
+    // this.getPlayerData();
+
+    console.log(dummyData.length);
+
+    this.setState(
+      {
+        playerData: dummyData,
+        pages: Math.ceil(dummyData.length / 10),
+      },
+      () => this.setTopDmg(this.state.playerData)
+    );
   }
 
   render() {
